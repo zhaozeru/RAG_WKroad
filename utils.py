@@ -27,7 +27,7 @@ def qa_agent(memory, name, question, temperature, max_tokens, top_p, frequency_p
         )
         texts = text_splitter.split_documents(docs)
 
-        embeddings_model = OpenAIEmbeddings(openai_api_base="https://api.aigc369.com/v1")
+        embeddings_model = OpenAIEmbeddings(openai_api_key=openai_api_key,openai_api_base="https://api.aigc369.com/v1")
         db = FAISS.from_documents(texts, embeddings_model)
         st.session_state["db"] = db  # 缓存处理后的结果
 
