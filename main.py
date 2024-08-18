@@ -7,7 +7,7 @@ st.markdown(
     """
     <style>
     .main .block-container {
-        max-width: 60%;  /* 调整页面宽度，85%可以根据需要调整 */
+        max-width: 60%;
         padding-top: 2rem;
         padding-right: 2rem;
         padding-left: 2rem;
@@ -17,19 +17,10 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-st.markdown(
-    """
-    <style>
-    .css-1d391kg {
-        width: 300px !important; /* 调整为你想要的宽度 */
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+
 st.title("💬 LangChain RAG PDF问答与对话工具！")
 st.divider()
-# st.markdown("<br>", unsafe_allow_html=True)
+
 # 添加按钮以清除会话历史和记忆
 if st.button("🔄 开始新对话"):
     st.session_state['user_questions'] = []
@@ -37,7 +28,6 @@ if st.button("🔄 开始新对话"):
     st.session_state['messages'] = [
         {"role": "ai", "content": "你好！欢迎回来，我们可以重新开始对话。"}
     ]
-
 
 with st.sidebar:
     st.markdown("## 💡 功能说明")
@@ -53,7 +43,6 @@ with st.sidebar:
     top_p = st.slider("顶部_p (Top-p)", 0.0, 1.0, 0.9, 0.1)
     frequency_penalty = st.slider("频率惩罚 (Frequency Penalty)", 0.0, 2.0, 0.3, 0.1)
     presence_penalty = st.slider("存在惩罚 (Presence Penalty)", 0.0, 2.0, 0.3, 0.1)
-    # 将历史记录放到侧边栏
 
     with st.expander("📜 历史问题", expanded=False):
         if st.session_state.get("user_questions"):
@@ -112,4 +101,7 @@ if prompt:
 
     # 显示源文档
     with st.expander("📄 查看源文档", expanded=False):
-        st.markdown(response["source_documents"])
+        if response["source_documents"]:
+            st.markdown(response["source_documents"])
+        else:
+            st.markdown("暂无源文档信息。")
