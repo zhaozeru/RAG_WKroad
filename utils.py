@@ -21,7 +21,7 @@ def qa_agent(memory, name, question, temperature, max_tokens, top_p, frequency_p
         docs = loader.load()
 
         text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=1500,
+            chunk_size=600,
             chunk_overlap=100,
             separators=[",","\n","。","，",""]
         )
