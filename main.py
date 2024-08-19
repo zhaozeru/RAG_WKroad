@@ -102,6 +102,6 @@ if prompt:
     # 显示源文档
     with st.expander("📄 查看源文档", expanded=False):
         if response["source_documents"]:
-            st.markdown(response["source_documents"])
+            st.write(response["source_documents"])
         else:
-            st.markdown("暂无源文档信息。")
+            st.write("暂无源文档信息。")

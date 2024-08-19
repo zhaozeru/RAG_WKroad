@@ -21,7 +21,7 @@ def qa_agent(memory, name, question, temperature, max_tokens, top_p, frequency_p
         docs = loader.load()
 
         text_splitter = RecursiveCharacterTextSplitter(
-            chunk_size=600,
+            chunk_size=500,
             chunk_overlap=100,
             separators=[",","\n","。","，",""]
         )
@@ -50,7 +50,8 @@ def qa_agent(memory, name, question, temperature, max_tokens, top_p, frequency_p
         用户提问：
         {question}
 
-        请提供认真的回答：
+        请注意，如果用户的问题超出了文档内容，
+        你可以告知用户超出知识库范围无法作答或者你可以不依靠知识库进行作答
         """,
         input_variables=["context", "question"]
     )
@@ -81,7 +82,7 @@ def qa_agent(memory, name, question, temperature, max_tokens, top_p, frequency_p
     response = qa.invoke({"chat_history": memory, "question": final_prompt})
     # 处理并显示源文档
     source_documents = response.get("source_documents", [])
-    source_text = "\n\n".join([doc.page_content for doc in source_documents[:2]])  # 截断前3个文档
+    source_text = "\n\n".join([doc.page_content for doc in source_documents[:1]])  # 截断前3个文档
 
     return {
         "answer": response["answer"],
