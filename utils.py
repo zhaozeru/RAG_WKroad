@@ -33,7 +33,7 @@ def qa_agent(memory, name, question, temperature, max_tokens, top_p, frequency_p
 
     # 使用缓存的结果
     db = st.session_state["db"]
-    retriever = db.as_retriever(search_kwargs={"k": 3})
+    retriever = db.as_retriever(search_kwargs={"k": 2})
 
     # 使用检索器获取相关文档
     relevant_docs = retriever.get_relevant_documents(question)
@@ -42,16 +42,17 @@ def qa_agent(memory, name, question, temperature, max_tokens, top_p, frequency_p
         template="""
         你是一个基于给定文档并进行问答的AI助手。
         文档的内容是上海武康路上名人故居的相关数据。
-        现在请你以一个当地导游的语气，请根据以下提供的文档内容来回答用户的问题。
-
+       
         文档内容：
-        {context}
-
+        {context};
         用户提问：
         {question}
 
-        请注意，如果用户的问题超出了文档内容，
-        你可以告知用户超出知识库范围无法作答或者你可以不依靠知识库进行作答
+        先对用户提问进行判断：
+        1、如果是和文档内容相关的问题，那么就请你以一个当地导游的角色，根据提供的文档内容来回答用户的问题。
+        当然，若超出了文档内容你可以告知用户超出知识库范围无法作答或者你可以不依靠知识库进行作答；
+        2、如果是用户的寒暄、交谈或者与文档无关，那么这就是一次聊天，你可以和用户温柔地交谈而无需借助文档内容。
+
         """,
         input_variables=["context", "question"]
     )
