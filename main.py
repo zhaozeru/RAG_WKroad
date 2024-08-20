@@ -51,7 +51,7 @@ with st.sidebar:
         else:
             st.markdown("暂无历史问题。")
 
-name = st.query_params.get("name", [""])
+name = st.session_state.get("name", None)
 
 # 初始化 session_state 的 keys
 if "memory" not in st.session_state:
@@ -73,7 +73,7 @@ for message in st.session_state["messages"]:
 prompt = st.chat_input("✨ 请输入您咨询的问题:")
 
 if prompt:
-    if not name:
+    if name is None:
         st.info("请返回上一级，选择一个故居作为咨询对象进行问答。")
         st.stop()
 
