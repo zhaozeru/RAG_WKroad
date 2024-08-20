@@ -51,7 +51,9 @@ with st.sidebar:
         else:
             st.markdown("暂无历史问题。")
 
-name = st.session_state.get("name", None)
+name = st.query_params.get("name", "空")
+if name == "":
+    name = "空"
 
 # 初始化 session_state 的 keys
 if "memory" not in st.session_state:
@@ -61,7 +63,7 @@ if "memory" not in st.session_state:
         output_key="answer"
     )
     st.session_state["messages"] = [
-        {"role": "ai", "content": f"您好，我是您的AI助手，您的咨询对象是{name}，请问有什么可以帮你的吗？"}
+        {"role": "ai", "content": f"您好，我是您的AI助手，您的咨询对象为{name}，请问有什么可以帮你的吗？"}
     ]
 
 if "user_questions" not in st.session_state:
@@ -73,7 +75,7 @@ for message in st.session_state["messages"]:
 prompt = st.chat_input("✨ 请输入您咨询的问题:")
 
 if prompt:
-    if name is None:
+    if name == "空":
         st.info("请返回上一级，选择一个故居作为咨询对象进行问答。")
         st.stop()
 
