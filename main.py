@@ -1,8 +1,8 @@
 import streamlit as st
 from langchain.memory import ConversationBufferMemory
 from utils import qa_agent
+import openai
 
-# 设置页面样式
 st.markdown(
     """
     <style>
@@ -21,7 +21,7 @@ st.markdown(
 st.title("💬 LangChain RAG PDF问答与对话工具！")
 st.divider()
 
-# 添加按钮以清除会话历史和记忆
+
 if st.button("🔄 开始新对话"):
     st.session_state['user_questions'] = []
     st.session_state['memory'] = ConversationBufferMemory(return_messages=True)
@@ -30,15 +30,19 @@ if st.button("🔄 开始新对话"):
     ]
 
 with st.sidebar:
+    openai_api_key = st.text_input("请输入您的OpenAI API密钥：", type="password")
+    st.markdown("[获取OpenAI API key](https://platform.openai.com/account/api-keys)")
+
     st.markdown("## 💡 功能说明")
     st.markdown(
-        "通过输入问题，您可以向PDF文档提问，AI助手会基于您的PDF文档内容进行回答。  \n  \n"
+        "通过输入问题，您可以向PDF文档提问，AI助手会基于您的PDF文档内容进行回答。  \n"
         "若回答有误请见谅。ChatGPT也可能会犯错，请核查重要信息！！🚨"
     )
 
-    # 使用st.expander创建可展开和收起的模型参数调节部分
+
+
     st.markdown("## 🎛️ 模型参数调节")
-    temperature = st.slider("温度 (Temperature)", 0.0, 1.0, 0.5, 0.1)
+    temperature = st.slider("温度 (Temperature)", 0.0, 1.0, 0.1, 0.1)
     max_tokens = st.slider("最大生成长度 (Max Tokens)", 50, 500, 500, 10)
     top_p = st.slider("顶部_p (Top-p)", 0.0, 1.0, 0.9, 0.1)
     frequency_penalty = st.slider("频率惩罚 (Frequency Penalty)", 0.0, 2.0, 0.3, 0.1)
@@ -55,7 +59,7 @@ name = st.query_params.get("name", "空")
 if name == "":
     name = "空"
 
-# 初始化 session_state 的 keys
+
 if "memory" not in st.session_state:
     st.session_state["memory"] = ConversationBufferMemory(
         return_messages=True,
@@ -74,17 +78,37 @@ for message in st.session_state["messages"]:
 
 prompt = st.chat_input("✨ 请输入您咨询的问题:")
 
-if prompt:
+
+
+def validate_openai_api_key(api_key):
+    try:
+        openai.api_key = api_key
+        openai.Engine.list()
+        return True
+    except openai.error.AuthenticationError:
+        return False
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return False
+
+
+if prompt and not openai_api_key:
+    st.info("请输入你的OpenAI API密钥")
+    st.stop()
+
+if prompt and openai_api_key:
+    if not validate_openai_api_key(openai_api_key):
+        st.error("输入的OpenAI API密钥无效，请检查后重新输入。")
+        st.stop()
+
     if name == "空":
         st.info("请返回上一级，选择一个故居作为咨询对象进行问答。")
         st.stop()
 
-    # 记录用户输入
     st.session_state["messages"].append({"role": "human", "content": prompt})
     st.chat_message("human").write(prompt)
     st.session_state["user_questions"].append(prompt)
 
-    # 调用 AI 生成回答
     with st.spinner("AI正在思考中，请稍等..."):
         response = qa_agent(
             st.session_state["memory"],
@@ -97,11 +121,11 @@ if prompt:
             presence_penalty=presence_penalty
         )
 
-    # 记录 AI 回答
+
     st.session_state["messages"].append({"role": "ai", "content": response["answer"]})
     st.chat_message("ai").write(response["answer"])
 
-    # 显示源文档
+
     with st.expander("📄 查看源文档", expanded=False):
         if response["source_documents"]:
             st.write(response["source_documents"])
