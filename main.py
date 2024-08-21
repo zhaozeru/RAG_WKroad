@@ -111,6 +111,7 @@ if prompt and openai_api_key:
 
     with st.spinner("AI正在思考中，请稍等..."):
         response = qa_agent(
+            openai_api_key,
             st.session_state["memory"],
             name,
             prompt,
