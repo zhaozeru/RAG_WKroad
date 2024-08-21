@@ -80,16 +80,6 @@ prompt = st.chat_input("✨ 请输入您咨询的问题:")
 
 
 
-def validate_openai_api_key(api_key):
-    try:
-        openai.api_key = api_key
-        openai.Engine.list()
-        return True
-    except openai.error.AuthenticationError:
-        return False
-    except Exception as e:
-        print(f"An error occurred: {e}")
-        return False
 
 
 if prompt and not openai_api_key:
@@ -97,10 +87,6 @@ if prompt and not openai_api_key:
     st.stop()
 
 if prompt and openai_api_key:
-    if not validate_openai_api_key(openai_api_key):
-        st.error("输入的OpenAI API密钥无效，请检查后重新输入。")
-        st.stop()
-
     if name == "空":
         st.info("请返回上一级，选择一个故居作为咨询对象进行问答。")
         st.stop()
