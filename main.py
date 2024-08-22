@@ -78,7 +78,7 @@ try:
     name = st.query_params.get("name", "空")
     if name == "":
         name = "空"
-    if not name:
+    if not name or name == "null":
         name = "空"
 
     if name != "空":
