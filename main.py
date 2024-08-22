@@ -78,6 +78,8 @@ try:
     name = st.query_params.get("name", "空")
     if name == "":
         name = "空"
+    if not name:
+        name = "空"
 
     if name != "空":
         knowledge_id = knowledge_id_list.get(name)
