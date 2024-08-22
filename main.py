@@ -77,11 +77,12 @@ with st.sidebar:
 try:
     name = st.query_params.get("name", "空")
     if name == "":
-        name = "故居知识库"
+        name = "空"
 
     if name != "空":
         knowledge_id = knowledge_id_list.get(name)
-    elif name == "故居知识库":
+    elif name == "空":
+        name = '故居知识库'
         knowledge_id = '1826238715882885120'
 
     if "message" not in st.session_state:
